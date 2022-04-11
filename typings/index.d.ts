@@ -4,8 +4,8 @@ interface Dish {
   canteen: string;
   floor?: string;
   window?: string;
-  start: string;
-  end: string;
+  start: number;
+  end: number;
   price: number;
   remark?: string;
   reporter?: string;

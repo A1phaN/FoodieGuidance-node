@@ -9,8 +9,8 @@ db.exec(
     canteen  INTEGER              NOT NULL,
     floor    INTEGER              NOT NULL,
     window   CHAR(30)             NOT NULL,
-    start    CHAR(30)             NOT NULL,
-    end      CHAR(30)             NOT NULL,
+    start    INTEGER              NOT NULL,
+    end      INTEGER              NOT NULL,
     price    REAL                 NOT NULL,
     remark   CHAR(1000)           NOT NULL,
     reporter CHAR(30)             NOT NULL

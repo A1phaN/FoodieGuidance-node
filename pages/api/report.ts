@@ -28,8 +28,8 @@ const handler = (req: NextApiRequest, res: NextApiResponse<ApiResponse>) => {
       typeof fields.canteen !== 'string' ||
       (fields.floor && typeof fields.floor !== 'string') ||
       (fields.window && typeof fields.window !== 'string') ||
-      typeof fields.start !== 'string' ||
-      typeof fields.end !== 'string' ||
+      typeof fields.start !== 'number' ||
+      typeof fields.end !== 'number' ||
       typeof fields.price !== 'string' ||
       (fields.remark && typeof fields.remark !== 'string') ||
       (fields.reporter && typeof fields.reporter !== 'string') ||

@@ -4,7 +4,8 @@ import db from './db';
  * 数据约定：
  *   使用小写便于处理
  *   canteen 表示config中该食堂的序号
- *   如果价格不能简单描述 price 表示一个人平均的花费，可在 REMARK 中说明
+ *   start 和 end 表示一天当中的以秒计时的时间，为了筛选开放的食堂，这里必须是数字，特殊情况可在 remark 中说明
+ *   如果价格不能简单描述 price 表示一个人平均的花费，可在 remark 中说明
  */
 db.exec(
   `CREATE TABLE IF NOT EXISTS DISH(
@@ -14,8 +15,8 @@ db.exec(
     canteen  CHAR(30)             NOT NULL,
     floor    CHAR(30)             NOT NULL,
     window   CHAR(30)             NOT NULL,
-    start    CHAR(30)             NOT NULL,
-    end      CHAR(30)             NOT NULL,
+    start    INTEGER              NOT NULL,
+    end      INTEGER              NOT NULL,
     price    REAL                 NOT NULL,
     remark   CHAR(1000)           NOT NULL,
     reporter CHAR(30)             NOT NULL
@@ -38,8 +39,9 @@ export function insertDish(dish: Dish): boolean {
   return insertDishStatement.run(_dish).changes == 1;
 }
 
-const selectAllDishStatement = db.prepare('SELECT * FROM DISH');
+const selectAllDishStatement = db.prepare<{ time: number }>('SELECT * FROM DISH WHERE start<@time AND end>@time');
 
 export function selectAllDish(): Dish[] {
-  return selectAllDishStatement.all();
+  const date = new Date()
+  return selectAllDishStatement.all({ time: date.getHours() * 3600 + date.getMinutes() * 60 + date.getSeconds() });
 }
