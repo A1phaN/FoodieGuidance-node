@@ -10,6 +10,7 @@
     "prettier": "prettier --write '**/*.{ts,tsx}'"
   },
   "dependencies": {
+    "antd": "^4.19.5",
     "better-sqlite3": "^7.5.1",
     "formidable": "^2.0.1",
     "nanoid": "^3.3.2",

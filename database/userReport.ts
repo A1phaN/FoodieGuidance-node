@@ -22,15 +22,8 @@ const insertUserReportStatement = db.prepare<Required<Dish>>(
   VALUES (@name, @img, @canteen, @floor, @window, @start, @end, @price, @remark, @reporter)`
 );
 
-export function insertReport(dish: Dish): boolean {
-  const _dish: Required<Dish> = {
-    floor: '',
-    window: '',
-    remark: '',
-    reporter: '',
-    ...dish,
-  };
-  return insertUserReportStatement.run(_dish).changes == 1;
+export function insertReport(dish: Required<Dish>): boolean {
+  return insertUserReportStatement.run(dish).changes == 1;
 }
 
 const deleteReportStatement = db.prepare<{ id: number }>('DELETE FROM USERREPORT WHERE ID=@id');

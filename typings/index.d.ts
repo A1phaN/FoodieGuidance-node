@@ -1,4 +1,5 @@
 interface Dish {
+  id?: number;
   name: string;
   img: string;
   canteen: string;

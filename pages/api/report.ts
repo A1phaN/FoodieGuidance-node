@@ -1,10 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { renameSync } from 'fs';
+import { mkdirSync, renameSync } from 'fs';
 import formidable from 'formidable';
 import { nanoid } from 'nanoid';
 
 import { insertReport } from '../../database';
 import { PUBLIC_PATH } from '../../config';
+
+mkdirSync(PUBLIC_PATH, { recursive: true });
 
 export const config = {
   api: {
@@ -28,12 +30,13 @@ const handler = (req: NextApiRequest, res: NextApiResponse<ApiResponse>) => {
       typeof fields.canteen !== 'string' ||
       (fields.floor && typeof fields.floor !== 'string') ||
       (fields.window && typeof fields.window !== 'string') ||
-      typeof fields.start !== 'number' ||
-      typeof fields.end !== 'number' ||
+      typeof fields.start !== 'string' ||
+      typeof fields.end !== 'string' ||
       typeof fields.price !== 'string' ||
       (fields.remark && typeof fields.remark !== 'string') ||
       (fields.reporter && typeof fields.reporter !== 'string') ||
-      !files?.img || Array.isArray(files.img)
+      !files?.img ||
+      Array.isArray(files.img)
     ) {
       return res.status(400).send({ code: 1 });
     }
@@ -42,18 +45,24 @@ const handler = (req: NextApiRequest, res: NextApiResponse<ApiResponse>) => {
     const img = `${nanoid()}.${file.originalFilename?.split('.').at(-1)}`;
     renameSync(file.filepath, `${PUBLIC_PATH}/${img}`);
 
-    insertReport({
+    const dish: Required<Dish> = {
       name: fields.name,
       img,
       canteen: fields.canteen,
       floor: fields.floor,
       window: fields.window,
-      start: fields.start,
-      end: fields.end,
+      start: Math.floor(Number(fields.start)),
+      end: Math.floor(Number(fields.end)),
       price: Number(fields.price),
       remark: fields.remark,
       reporter: fields.reporter,
-    });
+    };
+
+    if (Object.is(NaN, dish.start) || Object.is(NaN, dish.end) || Object.is(NaN, dish.price)) {
+      return res.status(400).send({ code: 1 });
+    }
+
+    insertReport(dish);
     res.send({ code: 0 });
   });
 };
