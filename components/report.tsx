@@ -125,7 +125,7 @@ export const DishReportForm: React.FC = () => {
             canteen => canteen.canteen === form.getFieldValue('canteen')
           );
           return (
-            canteen && (
+            canteen && canteen.floors && (
               <Form.Item label="楼层">
                 <Select
                   onChange={floor => {
