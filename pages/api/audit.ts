@@ -35,7 +35,7 @@ const handler = (req: NextApiRequest, res: NextApiResponse<ApiResponse<never | D
       return res.status(404).send({ code: 1, msg: 'report not found' });
     }
     if (!approve) {
-      rmSync(`${PUBLIC_PATH}/${report.img}`);
+      // rmSync(`${PUBLIC_PATH}/${report.img}`);
       deleteReport(id);
     } else if (dish) {
       insertDish({

@@ -17,12 +17,12 @@ db.exec(
   )`
 );
 
-const insertUserReportStatement = db.prepare<Required<Dish>>(
+const insertUserReportStatement = db.prepare<Required<Omit<Dish, 'id'>>>(
   `INSERT INTO USERREPORT (name, img, canteen, floor, window, start, end, price, remark, reporter)
   VALUES (@name, @img, @canteen, @floor, @window, @start, @end, @price, @remark, @reporter)`
 );
 
-export function insertReport(dish: Required<Dish>): boolean {
+export function insertReport(dish: Required<Omit<Dish, 'id'>>): boolean {
   return insertUserReportStatement.run(dish).changes == 1;
 }
 

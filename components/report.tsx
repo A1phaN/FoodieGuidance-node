@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
-import { Button, Form, Input, message, Select, TimePicker, Upload } from 'antd';
+import { Button, Form, Input, message, Select, Space, TimePicker, Upload } from 'antd';
 import { UploadFile } from 'antd/lib/upload/interface';
-import { PlusOutlined } from '@ant-design/icons';
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 
 import { CANTEENS } from '../config';
 
@@ -11,7 +11,7 @@ interface DishReportFormValue extends Omit<Dish, 'img'> {
   img: {
     file: File;
   };
-  range: any;
+  ranges: any[];
 }
 
 export const DishReportForm: React.FC = () => {
@@ -24,14 +24,17 @@ export const DishReportForm: React.FC = () => {
   const onFinish = useCallback(
     async (values: DishReportFormValue) => {
       setSubmitting(true);
+      const ranges = values.ranges.map((range: any, index) => ({
+        start: range[index][0].hour() * 60 + range[index][0].minute(),
+        end: range[index][1].hour() * 60 + range[index][1].minute(),
+      }));
       const formdata = new FormData();
       formdata.append('name', values.name);
       formdata.append('img', values.img.file);
       formdata.append('canteen', values.canteen);
       formdata.append('floor', values.floor ?? '');
       formdata.append('window', values.window ?? '');
-      formdata.append('start', String(values.start));
-      formdata.append('end', String(values.end));
+      formdata.append('ranges', JSON.stringify(ranges));
       formdata.append('price', String(values.price));
       formdata.append('remark', values.remark ?? '');
       formdata.append('reporter', values.reporter ?? '');
@@ -147,30 +150,38 @@ export const DishReportForm: React.FC = () => {
         )}
         <Form.Item name="start" style={{ display: 'none' }} />
         <Form.Item name="end" style={{ display: 'none' }} />
-        <Form.Item
-          label="供应时间"
-          name="range"
-          rules={[
-            {
-              required: true,
-              message: '请选择供应时间',
-            },
-          ]}
-        >
-          <TimePicker.RangePicker
-            format="HH:mm"
-            onChange={range => {
-              if (!range || !range[0] || !range[1]) {
-                return;
-              }
-              form.setFieldsValue({
-                start: range[0].hour() * 60 + range[0].minute(),
-                end: range[1].hour() * 60 + range[1].minute(),
-                range,
-              });
-            }}
-          />
-        </Form.Item>
+        <Form.List name="ranges" initialValue={[[]]}>
+          {(fields, { add, remove }) => (
+            <>
+              {fields.map((field, index, array) => (
+                <Space key={field.key} align="baseline">
+                  <Form.Item
+                    label={'供应时间' + String(index)}
+                    name={[field.name, String(index)]}
+                    rules={
+                      index === 0
+                        ? [
+                            {
+                              required: true,
+                              message: '至少填写一个供应时间',
+                            },
+                          ]
+                        : []
+                    }
+                  >
+                    <TimePicker.RangePicker format="HH:mm" />
+                  </Form.Item>
+                  {array.length > 1 && <MinusCircleOutlined onClick={() => remove(field.name)} />}
+                </Space>
+              ))}
+              <Form.Item>
+                <Button type="dashed" onClick={add} block icon={<PlusOutlined />}>
+                  添加供应时间
+                </Button>
+              </Form.Item>
+            </>
+          )}
+        </Form.List>
         <Form.Item
           label="菜品价格"
           name="price"
