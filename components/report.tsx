@@ -143,7 +143,7 @@ export const DishReportForm: React.FC = () => {
             )
           );
         })()}
-        {form.getFieldValue('floor') && (
+        {form.getFieldValue('canteen') && (
           <Form.Item label="窗口" name="window">
             <Input />
           </Form.Item>
