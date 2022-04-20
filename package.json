@@ -5,14 +5,13 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 8000",
     "lint": "next lint",
     "prettier": "prettier --write '**/*.{ts,tsx}'"
   },
   "dependencies": {
     "antd": "^4.19.5",
     "better-sqlite3": "^7.5.1",
-    "compressorjs": "^1.1.1",
     "formidable": "^2.0.1",
     "nanoid": "^3.3.2",
     "next": "12.1.4",

@@ -2,7 +2,6 @@ import React, { useCallback, useState } from 'react';
 import { Button, Form, Input, message, Select, Space, TimePicker, Upload } from 'antd';
 import { UploadFile } from 'antd/lib/upload/interface';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import Compressor from 'compressorjs';
 
 import { CANTEENS } from '../config';
 
@@ -29,36 +28,31 @@ export const DishReportForm: React.FC = () => {
         start: range[index][0].hour() * 60 + range[index][0].minute(),
         end: range[index][1].hour() * 60 + range[index][1].minute(),
       }));
-      new Compressor(values.img.file, {
-        convertSize: 3.5 * 1024 * 1024,
-        async success(img) {
-          const formdata = new FormData();
-          formdata.append('name', values.name);
-          formdata.append('img', img);
-          formdata.append('canteen', values.canteen);
-          formdata.append('floor', values.floor ?? '');
-          formdata.append('window', values.window ?? '');
-          formdata.append('ranges', JSON.stringify(ranges));
-          formdata.append('price', String(values.price));
-          formdata.append('remark', values.remark ?? '');
-          formdata.append('reporter', values.reporter ?? '');
-          try {
-            const response = await (
-              await fetch('/api/report', { method: 'POST', body: formdata })
-            ).json();
-            if (response.code === 0) {
-              message.success('提交成功');
-              form.resetFields();
-            } else {
-              message.error('提交失败');
-            }
-          } catch(e) {
-            message.error('提交失败' + JSON.stringify(e));
-          } finally {
-            setSubmitting(false);
-          }
+      const formdata = new FormData();
+      formdata.append('name', values.name);
+      formdata.append('img', values.img.file);
+      formdata.append('canteen', values.canteen);
+      formdata.append('floor', values.floor ?? '');
+      formdata.append('window', values.window ?? '');
+      formdata.append('ranges', JSON.stringify(ranges));
+      formdata.append('price', String(values.price));
+      formdata.append('remark', values.remark ?? '');
+      formdata.append('reporter', values.reporter ?? '');
+      try {
+        const response = await (
+          await fetch('/api/report', { method: 'POST', body: formdata })
+        ).json();
+        if (response.code === 0) {
+          message.success('提交成功');
+          form.resetFields();
+        } else {
+          message.error('提交失败');
         }
-      });
+      } catch(e) {
+        message.error('提交失败' + JSON.stringify(e));
+      } finally {
+        setSubmitting(false);
+      }
     },
     [form]
   );
