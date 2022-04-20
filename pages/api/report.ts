@@ -1,4 +1,4 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse, NextConfig } from 'next';
 import { mkdirSync, renameSync } from 'fs';
 import formidable from 'formidable';
 import { nanoid } from 'nanoid';
@@ -8,7 +8,7 @@ import { PUBLIC_PATH } from '../../config';
 
 mkdirSync(PUBLIC_PATH, { recursive: true });
 
-export const config = {
+export const config: NextConfig = {
   api: {
     bodyParser: false,
   },

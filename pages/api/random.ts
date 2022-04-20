@@ -4,7 +4,6 @@ import { selectAllDish } from '../../database';
 
 export function getRandomDish(): Dish {
   const dish = selectAllDish();
-  console.log(dish);
   return dish[Math.floor(Math.random() * dish.length)];
 }
 
